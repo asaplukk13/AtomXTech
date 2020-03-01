@@ -1,0 +1,93 @@
+package org.firstinspires.ftc.robotcontroller.external.samples;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+
+
+@TeleOp(name="Damn you", group="Iterative Opmode")
+@Disabled
+public class SperCaMerge extends OpMode
+{
+    // Declare OpMode members.
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor leftDrive = null;
+    private DcMotor rightDrive = null;
+    private DcMotor rleftDrive = null;
+    private DcMotor rrightDrive = null;
+    private DcMotor arm = null;
+
+    private Servo leftClaw;
+    private Servo rightClaw;
+
+    @Override
+    public void init() {
+        telemetry.addData("Status", "Initialized");
+
+        leftDrive  = hardwareMap.get(DcMotor.class, "leftFront");
+        rightDrive = hardwareMap.get(DcMotor.class, "rightFront");
+        rleftDrive  = hardwareMap.get(DcMotor.class, "leftRear");
+        rrightDrive = hardwareMap.get(DcMotor.class, "rightRear");
+        leftClaw = hardwareMap.get(Servo.class, "agataStanga");
+        rightClaw = hardwareMap.get(Servo.class, "agataDreapta");
+        arm = hardwareMap.get(DcMotor.class, "brat");
+
+        leftDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        rleftDrive.setDirection(DcMotor.Direction.FORWARD);
+        rrightDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        telemetry.addData("Status", "Initialized");
+    }
+
+
+    @Override
+    public void init_loop() {
+    }
+
+    @Override
+    public void start() {
+        runtime.reset();
+    }
+
+
+    @Override
+    public void loop() {
+
+        double leftPower;
+        double rightPower;
+        double armPower;
+
+         leftPower  = -gamepad1.left_stick_y ;
+         rightPower = -gamepad1.right_stick_y ;
+         armPower = gamepad2.right_stick_y;
+
+        leftDrive.setPower(leftPower);
+        rleftDrive.setPower(leftPower);
+        rightDrive.setPower(rightPower);
+        rrightDrive.setPower(rightPower);
+        arm.setPower(armPower);
+
+
+        if(gamepad1.x){
+            leftClaw.setPosition(1);
+            rightClaw.setPosition(1);
+        } else {
+            leftClaw.setPosition(0);
+            rightClaw.setPosition(0);
+        }
+
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+    }
+
+
+    @Override
+    public void stop() {
+    }
+
+}
