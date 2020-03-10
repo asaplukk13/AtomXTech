@@ -1,0 +1,119 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcontroller.external.samples.BasicOpMode_Iterative;
+
+
+@TeleOp(name="AtomXTeleOp", group="Iterative Opmode")
+
+public class AtomXTeleOp extends BasicOpMode_Iterative {
+
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor frontLeftDrive = null;
+    private DcMotor frontRightDrive = null;
+    private DcMotor rearLeftDrive = null;
+    private DcMotor rearRightDrive = null;
+    private DcMotor arm = null;
+
+
+    private Servo leftClaw;
+    private Servo rightClaw;
+    private Servo servoArmLeft;
+    private Servo servoArmRight;
+
+    @Override
+    public void init() {
+        telemetry.addData("Status", "Initialized");
+
+        // Wheels front
+
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "leftFront");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "rightFront");
+
+        // Wheels rear
+
+        rearLeftDrive = hardwareMap.get(DcMotor.class, "leftRear");
+        rearRightDrive = hardwareMap.get(DcMotor.class, "rightRear");
+
+        // Stoppers
+
+        leftClaw = hardwareMap.get(Servo.class, "servoRearLeft");
+        rightClaw = hardwareMap.get(Servo.class, "servoRearRight");
+
+        // Arm and arm claws
+
+        arm = hardwareMap.get(DcMotor.class, "arm");
+        servoArmLeft = hardwareMap.get(Servo.class, "servoLeft");
+        servoArmRight = hardwareMap.get(Servo.class, "servoRight");
+
+
+        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        rearLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        rearRightDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        telemetry.addData("Status", "Initialized");
+    }
+
+       @Override
+       public void init_loop() {
+    }
+
+       @Override
+       public void start() {
+           runtime.reset();
+      }
+
+
+    @Override
+    public void loop() {
+
+        double leftPower;
+        double rightPower;
+        double armPower;
+
+        // Wheels and arm power
+
+        leftPower = -gamepad1.right_stick_y;
+        rightPower = -gamepad1.left_stick_y;
+        armPower = -gamepad2.right_stick_y;
+
+
+        frontLeftDrive.setPower(leftPower);
+        frontLeftDrive.setPower(leftPower);
+        rearRightDrive.setPower(rightPower);
+        rearRightDrive.setPower(rightPower);
+        arm.setPower(armPower);
+
+        // Stoppers
+
+        if (gamepad2.y) {
+            leftClaw.setPosition(0.5);
+            rightClaw.setPosition(0.4);
+        } else if (gamepad2.b) {
+            leftClaw.setPosition(0);
+            rightClaw.setPosition(1);
+        }
+
+        // Arm claw
+
+        if (gamepad2.x) {
+            servoArmLeft.setPosition(1);
+            servoArmRight.setPosition(0);
+        } else if (gamepad2.a) {
+            servoArmLeft.setPosition(0);
+            servoArmRight.setPosition(1);
+        }
+
+   telemetry.addData("Status", "Run Time: " + runtime.toString());
+   telemetry.addData("Wheels", "left (%.2f), right (%.2f)", leftPower, rightPower);
+   telemetry.addData("Arm", "(%.2f)", armPower);
+
+
+    }
+}
+
